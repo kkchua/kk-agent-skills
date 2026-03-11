@@ -83,12 +83,15 @@ def search_digital_me(
         "security_filter_applied": True,
         "filtered_count": len(result.chunks if result.has_results else []) - len(sanitized_chunks),
         "message": result.message,
+        "retrieval_time_ms": result.retrieval_time_ms,
+        "chunks_searched": result.chunks_searched,
+        "avg_distance": result.avg_distance,
     }
 
 
 @agent_tool(
     name="Get Work Experience",
-    description="Get work experience from Digital Me (structured data or RAG)",
+    description="Get the person's work experience and employment history from their Digital Me profile",
     tags=["digital_me", "experience", "resume"],
     access_level="demo",
     sensitivity="low",
@@ -119,12 +122,14 @@ def get_work_experience(
 
     from app.services.digital_me_service import get_work_experience_service
     experiences = get_work_experience_service(company=company)
+    if not experiences:
+        return {"available": False, "message": "Work experience information is not available in my profile yet."}
     return {"source": "structured", "experiences": experiences, "count": len(experiences)}
 
 
 @agent_tool(
     name="Get Skills",
-    description="Get skills from Digital Me profile",
+    description="Get the person's technical and professional skills from their Digital Me profile",
     tags=["digital_me", "skills"],
     access_level="demo",
     sensitivity="low",
@@ -152,12 +157,14 @@ def get_skills(
 
     from app.services.digital_me_service import get_skills_service
     skills = get_skills_service(category=category, min_proficiency=min_proficiency)
+    if not skills:
+        return {"available": False, "message": "Skills information is not available in my profile yet."}
     return {"source": "structured", "skills": skills, "count": len(skills)}
 
 
 @agent_tool(
     name="Get Education",
-    description="Get education history from Digital Me profile",
+    description="Get the person's education history (university, degree, field of study) from their Digital Me profile",
     tags=["digital_me", "education", "resume"],
     access_level="demo",
     sensitivity="low",
@@ -168,21 +175,29 @@ def get_education(
     user_id: Optional[str] = None,
 ) -> dict:
     """
-    Get education history.
+    Get education history — RAG first, structured fallback.
 
     Args:
         degree_level: Filter by degree (bachelor, master, phd)
         field_of_study: Filter by field
         user_id: User ID (auto-injected)
     """
+    rag_query = " ".join(filter(None, ["education academic background university degree", degree_level, field_of_study]))
+    rag_result = search_digital_me(query=rag_query, top_k=5, source_type=None, user_id=user_id)
+
+    if rag_result.get("confidence", 0.0) > 0.1:
+        return {"source": "rag", "confidence": rag_result["confidence"], "chunks": rag_result["chunks"]}
+
     from app.services.digital_me_service import get_education_service
     education = get_education_service(degree_level=degree_level, field_of_study=field_of_study)
+    if not education:
+        return {"available": False, "message": "Education information is not available in my profile yet."}
     return {"source": "structured", "education": education, "count": len(education)}
 
 
 @agent_tool(
     name="Get Projects",
-    description="Get projects from Digital Me profile",
+    description="Get the person's projects and technical work from their Digital Me profile",
     tags=["digital_me", "projects"],
     access_level="demo",
     sensitivity="low",
@@ -214,12 +229,14 @@ def get_projects(
 
     from app.services.digital_me_service import get_projects_service
     projects = get_projects_service(technology=technology, role=role)
+    if not projects:
+        return {"available": False, "message": "Project information is not available in my profile yet."}
     return {"source": "structured", "projects": projects, "count": len(projects)}
 
 
 @agent_tool(
     name="Get Certifications",
-    description="Get certifications from Digital Me profile",
+    description="Get the person's professional certifications and credentials from their Digital Me profile",
     tags=["digital_me", "certifications", "resume"],
     access_level="demo",
     sensitivity="low",
@@ -230,21 +247,29 @@ def get_certifications(
     user_id: Optional[str] = None,
 ) -> dict:
     """
-    Get certifications.
+    Get certifications — RAG first, structured fallback.
 
     Args:
         issuer: Filter by issuer
         include_expired: Include expired certifications
         user_id: User ID (auto-injected)
     """
+    rag_query = " ".join(filter(None, ["professional certifications credentials qualifications", issuer]))
+    rag_result = search_digital_me(query=rag_query, top_k=5, source_type=None, user_id=user_id)
+
+    if rag_result.get("confidence", 0.0) > 0.1:
+        return {"source": "rag", "confidence": rag_result["confidence"], "chunks": rag_result["chunks"]}
+
     from app.services.digital_me_service import get_certifications_service
     certs = get_certifications_service(issuer=issuer, include_expired=include_expired)
+    if not certs:
+        return {"available": False, "message": "Certification information is not available in my profile yet."}
     return {"source": "structured", "certifications": certs, "count": len(certs)}
 
 
 @agent_tool(
     name="Get Digital Me Summary",
-    description="Get a brief summary of Digital Me profile",
+    description="Get a brief overview of the person's Digital Me profile (name, title, top skills)",
     tags=["digital_me", "summary"],
     access_level="anonymous",
     sensitivity="low",
