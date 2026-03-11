@@ -1,0 +1,7 @@
+{
+  "portfolio_api_url_env": "PORTFOLIO_API_URL",
+  "portfolio_admin_key_env": "PORTFOLIO_ADMIN_KEY",
+  "portfolio_site_url_env": "PORTFOLIO_SITE_URL",
+  "default_status": "draft",
+  "request_timeout_seconds": 30
+}

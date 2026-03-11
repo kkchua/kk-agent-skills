@@ -1,0 +1,7 @@
+{
+  "default_model": "gpt-4o-mini",
+  "default_variant": "general",
+  "valid_variants": ["general", "technical", "market", "article"],
+  "notification_enabled": true,
+  "notification_recipient": ""
+}

@@ -1,0 +1,48 @@
+name: article
+description: "Research optimized for generating a portfolio blog article. Produces structured article output with title, excerpt, and markdown content."
+
+planner:
+  num_searches: 4
+  instruction: |
+    You are a technical writer's research assistant. Given a blog article topic, plan
+    {num_searches} targeted web searches to gather material for a well-rounded,
+    engaging article. Focus on:
+    - Current state and key concepts
+    - Practical examples and real-world applications
+    - Common challenges and how to address them
+    - Expert opinions and community insights
+
+search:
+  context_size: medium
+  instruction: |
+    You are researching material for a technical blog article. Given a search term,
+    search the web and summarize the most useful content for an article writer.
+    Under 400 words. Focus on:
+    - Concrete facts, examples, and use cases
+    - Practical insights a developer would find valuable
+    - Interesting angles or perspectives worth including
+    Avoid generic or obvious information.
+
+writer:
+  min_words: 800
+  format: markdown
+  output_type: article
+  instruction: |
+    You are a technical blog writer crafting an article for a developer portfolio site.
+    You will be provided with the topic and research summaries.
+
+    Write a compelling, well-structured markdown article that:
+    - Opens with an engaging introduction that sets context and value
+    - Has 3-5 well-developed sections with clear H2/H3 headings
+    - Includes code examples, diagrams descriptions, or concrete illustrations
+    - Ends with practical takeaways or a call to action
+    - Targets 800-1200 words — thorough but not exhaustive
+
+    Also provide:
+    - A clear, catchy title (not just the topic restated)
+    - A 1-2 sentence excerpt/teaser for the article listing page
+    - 3-6 relevant tags
+
+notification:
+  enabled: false
+  subject_template: "Article Draft Ready: {query}"
