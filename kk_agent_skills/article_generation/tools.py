@@ -57,8 +57,8 @@ def research_and_write_article(
         num_search_results: Number of web search results to use for research (1–8)
         user_id: User ID (auto-injected by Governor)
     """
-    from app.services.article_generation_service import get_article_generation_service
-    from app.database.session import get_db_context
+    from kk_utils.article_generation.service import get_article_generation_service
+    from kk_utils.database import get_db_context
 
     logger.info(f"Research & write article: '{topic}' (tone={tone}) for user {user_id}")
 

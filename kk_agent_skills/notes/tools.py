@@ -39,9 +39,9 @@ def create_note(
         user_id: User ID (auto-injected by Governor)
         metadata: Optional metadata (tags, classification, etc.)
     """
-    from app.services.note_service import create_note_service
+    from kk_utils.notes.service import create_note
     logger.info(f"Creating note: {title} (group_id={group_id})")
-    return create_note_service(title=title, content=content, group_id=group_id, user_id=user_id, metadata=metadata)
+    return create_note(title=title, content=content, group_id=group_id, user_id=user_id, metadata=metadata)
 
 
 @agent_tool(
@@ -62,9 +62,9 @@ def get_note(
         note_id: Note ID to retrieve
         user_id: User ID for access control (auto-injected)
     """
-    from app.services.note_service import get_note_service
+    from kk_utils.notes.service import get_note
     logger.info(f"Retrieving note {note_id}")
-    return get_note_service(note_id=note_id, user_id=user_id)
+    return get_note(note_id=note_id, user_id=user_id)
 
 
 @agent_tool(
@@ -93,9 +93,9 @@ def update_note(
         metadata: New metadata (optional)
         user_id: User ID for access control (auto-injected)
     """
-    from app.services.note_service import update_note_service
+    from kk_utils.notes.service import update_note
     logger.info(f"Updating note {note_id}")
-    return update_note_service(note_id=note_id, title=title, content=content, metadata=metadata, user_id=user_id)
+    return update_note(note_id=note_id, title=title, content=content, metadata=metadata, user_id=user_id)
 
 
 @agent_tool(
@@ -120,9 +120,9 @@ def delete_note(
         user_id: User ID for access control (auto-injected)
         confirmed: Confirmation flag (required for destructive actions)
     """
-    from app.services.note_service import delete_note_service
+    from kk_utils.notes.service import delete_note
     logger.info(f"Deleting note {note_id}")
-    return delete_note_service(note_id=note_id, user_id=user_id)
+    return delete_note(note_id=note_id, user_id=user_id)
 
 
 @agent_tool(
@@ -147,9 +147,9 @@ def search_notes(
         limit: Maximum results to return
         user_id: User ID for filtering results (auto-injected)
     """
-    from app.services.note_service import search_notes_service
+    from kk_utils.notes.service import search_notes
     logger.info(f"Searching notes: {query}")
-    return search_notes_service(query=query, group_id=group_id, limit=limit, user_id=user_id)
+    return search_notes(query=query, group_id=group_id, limit=limit, user_id=user_id)
 
 
 @agent_tool(
@@ -172,9 +172,9 @@ def list_notes(
         limit: Maximum results to return
         user_id: User ID for filtering (auto-injected)
     """
-    from app.services.note_service import list_notes_service
+    from kk_utils.notes.service import list_notes
     logger.info(f"Listing notes (group_id={group_id}, limit={limit})")
-    return list_notes_service(group_id=group_id, limit=limit, user_id=user_id)
+    return list_notes(group_id=group_id, limit=limit, user_id=user_id)
 
 
 _auto_register()

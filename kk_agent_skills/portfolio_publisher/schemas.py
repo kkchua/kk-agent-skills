@@ -22,7 +22,7 @@ class ArticleInput(BaseModel):
     content: str = Field(..., min_length=50, description="Full article body in markdown.")
     excerpt: Optional[str] = Field(None, max_length=500)
     category: Optional[str] = Field(None, max_length=100)
-    tags: list[str] = Field(default_factory=list)
+    tags: list[str] = Field(default_factory=list, description="List of tag strings.")
     status: ArticleStatus = ArticleStatus.draft
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -34,7 +34,7 @@ class ArticleOutput(BaseModel):
     title: str
     status: ArticleStatus
     category: Optional[str] = None
-    tags: list[str] = Field(default_factory=list)
+    tags: list[str] = Field(default_factory=list, description="List of tag strings.")
     excerpt: Optional[str] = None
     created_at: Optional[datetime] = None
     published_at: Optional[datetime] = None
@@ -56,7 +56,7 @@ class ArticleListItem(BaseModel):
     title: str
     status: ArticleStatus
     category: Optional[str] = None
-    tags: list[str] = Field(default_factory=list)
+    tags: list[str] = Field(default_factory=list, description="List of tag strings.")
     created_at: Optional[datetime] = None
     published_at: Optional[datetime] = None
 
