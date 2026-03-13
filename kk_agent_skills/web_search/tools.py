@@ -54,7 +54,7 @@ def web_search(
         search_depth: "basic" (fast) or "advanced" (higher quality)
         user_id: User ID (auto-injected by Governor)
     """
-    from app.services.web_search_service import get_web_search_service
+    from kk_utils.web_search.service import get_web_search_service
 
     logger.info(f"Web search: '{query}' (max_results={max_results}) for user {user_id}")
 

@@ -120,8 +120,8 @@ def get_work_experience(
             "sources": rag_result["sources"],
         }
 
-    from app.services.digital_me_service import get_work_experience_service
-    experiences = get_work_experience_service(company=company)
+    from kk_utils.digital_me.service import get_work_experience
+    experiences = get_work_experience(company=company)
     if not experiences:
         return {"available": False, "message": "Work experience information is not available in my profile yet."}
     return {"source": "structured", "experiences": experiences, "count": len(experiences)}
@@ -155,8 +155,8 @@ def get_skills(
     if rag_result.get("confidence", 0.0) > 0.1:
         return {"source": "rag", "confidence": rag_result["confidence"], "chunks": rag_result["chunks"]}
 
-    from app.services.digital_me_service import get_skills_service
-    skills = get_skills_service(category=category, min_proficiency=min_proficiency)
+    from kk_utils.digital_me.service import get_skills
+    skills = get_skills(category=category, min_proficiency=min_proficiency)
     if not skills:
         return {"available": False, "message": "Skills information is not available in my profile yet."}
     return {"source": "structured", "skills": skills, "count": len(skills)}
@@ -188,8 +188,8 @@ def get_education(
     if rag_result.get("confidence", 0.0) > 0.1:
         return {"source": "rag", "confidence": rag_result["confidence"], "chunks": rag_result["chunks"]}
 
-    from app.services.digital_me_service import get_education_service
-    education = get_education_service(degree_level=degree_level, field_of_study=field_of_study)
+    from kk_utils.digital_me.service import get_education
+    education = get_education(degree_level=degree_level, field_of_study=field_of_study)
     if not education:
         return {"available": False, "message": "Education information is not available in my profile yet."}
     return {"source": "structured", "education": education, "count": len(education)}
@@ -227,8 +227,8 @@ def get_projects(
     if rag_result.get("confidence", 0.0) > 0.1:
         return {"source": "rag", "confidence": rag_result["confidence"], "chunks": rag_result["chunks"]}
 
-    from app.services.digital_me_service import get_projects_service
-    projects = get_projects_service(technology=technology, role=role)
+    from kk_utils.digital_me.service import get_projects
+    projects = get_projects(technology=technology, role=role)
     if not projects:
         return {"available": False, "message": "Project information is not available in my profile yet."}
     return {"source": "structured", "projects": projects, "count": len(projects)}
@@ -260,8 +260,8 @@ def get_certifications(
     if rag_result.get("confidence", 0.0) > 0.1:
         return {"source": "rag", "confidence": rag_result["confidence"], "chunks": rag_result["chunks"]}
 
-    from app.services.digital_me_service import get_certifications_service
-    certs = get_certifications_service(issuer=issuer, include_expired=include_expired)
+    from kk_utils.digital_me.service import get_certifications
+    certs = get_certifications(issuer=issuer, include_expired=include_expired)
     if not certs:
         return {"available": False, "message": "Certification information is not available in my profile yet."}
     return {"source": "structured", "certifications": certs, "count": len(certs)}
@@ -281,8 +281,8 @@ def get_digital_me_summary(user_id: Optional[str] = None) -> dict:
     Args:
         user_id: User ID (auto-injected)
     """
-    from app.services.digital_me_service import get_digital_me_summary_service
-    return get_digital_me_summary_service()
+    from kk_utils.digital_me.service import get_digital_me_summary
+    return get_digital_me_summary()
 
 
 _auto_register()
