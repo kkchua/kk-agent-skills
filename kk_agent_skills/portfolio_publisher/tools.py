@@ -46,7 +46,7 @@ def create_portfolio_article(
     content: str,
     excerpt: Optional[str] = None,
     category: Optional[str] = None,
-    tags: Optional[list] = None,
+    tags: Optional[list[str]] = None,
     status: str = "draft",
     user_id: Optional[str] = None,
 ) -> dict:
@@ -242,7 +242,7 @@ def update_portfolio_article(
     content: Optional[str] = None,
     excerpt: Optional[str] = None,
     category: Optional[str] = None,
-    tags: Optional[list] = None,
+    tags: Optional[list[str]] = None,
     user_id: Optional[str] = None,
 ) -> dict:
     """
