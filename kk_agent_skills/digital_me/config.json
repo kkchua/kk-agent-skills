@@ -1,5 +1,0 @@
-{
-  "rag_top_k": 5,
-  "min_confidence": 0.1,
-  "collection_name": "digital_me"
-}
