@@ -3,26 +3,14 @@ web_search skill — tools.py
 
 agentskills.io-compatible tool module.
 Tavily-powered web search for real-time information retrieval.
+Calls personal-assistant API instead of kk-utils services directly.
 """
-import asyncio
 import logging
 from typing import Optional
 
 from kk_utils.agent_tools import agent_tool, _auto_register
 
 logger = logging.getLogger(__name__)
-
-
-def _asyncio_run(coroutine):
-    """Run async coroutine in sync context."""
-    try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            import nest_asyncio
-            nest_asyncio.apply()
-        return loop.run_until_complete(coroutine)
-    except RuntimeError:
-        return asyncio.run(coroutine)
 
 
 @agent_tool(
@@ -54,18 +42,10 @@ def web_search(
         search_depth: "basic" (fast) or "advanced" (higher quality)
         user_id: User ID (auto-injected by Governor)
     """
-    from kk_utils.web_search.service import get_web_search_service
+    from kk_agent_skills._http_client import call_tool
 
     logger.info(f"Web search: '{query}' (max_results={max_results}) for user {user_id}")
-
-    service = get_web_search_service()
-    result = _asyncio_run(service.search(query=query, max_results=max_results, search_depth=search_depth))
-
-    if not result.success:
-        logger.warning(f"Web search failed: {result.error}")
-        return {"results": [], "total": 0, "query": query, "success": False, "error": result.error}
-
-    return {"results": [r.model_dump() for r in result.results], "total": result.total, "query": result.query, "success": True}
+    return call_tool("web-search", {"query": query, "max_results": max_results, "search_depth": search_depth})
 
 
 _auto_register()

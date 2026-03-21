@@ -3,27 +3,14 @@ article_generation skill — tools.py
 
 agentskills.io-compatible tool module.
 Research a topic via Tavily web search and generate a structured article draft.
-Backend service calls are lazy imports — resolved at call time within the backend.
+Calls personal-assistant API instead of kk-utils services directly.
 """
-import asyncio
 import logging
 from typing import Optional
 
 from kk_utils.agent_tools import agent_tool, _auto_register
 
 logger = logging.getLogger(__name__)
-
-
-def _asyncio_run(coroutine):
-    """Run async coroutine in sync context."""
-    try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            import nest_asyncio
-            nest_asyncio.apply()
-        return loop.run_until_complete(coroutine)
-    except RuntimeError:
-        return asyncio.run(coroutine)
 
 
 @agent_tool(
@@ -57,40 +44,15 @@ def research_and_write_article(
         num_search_results: Number of web search results to use for research (1–8)
         user_id: User ID (auto-injected by Governor)
     """
-    from kk_utils.article_generation.service import get_article_generation_service
-    from kk_utils.database import get_db_context
+    from kk_agent_skills._http_client import call_tool
 
     logger.info(f"Research & write article: '{topic}' (tone={tone}) for user {user_id}")
-
-    service = get_article_generation_service()
-
-    with get_db_context() as db:
-        result = _asyncio_run(
-            service.generate(
-                topic=topic,
-                db_session=db,
-                category=category,
-                tone=tone,
-                num_search_results=num_search_results,
-            )
-        )
-
-    logger.info(f"Article generated: '{result.title}' (slug: {result.slug})")
-
-    return {
-        "title": result.title,
-        "slug": result.slug,
-        "excerpt": result.excerpt,
-        "tags": result.tags,
-        "category": result.category,
-        "search_results_used": result.search_results_used,
-        "status": "draft",
-        "message": (
-            f"Article '{result.title}' has been researched and saved as a draft. "
-            f"Visit /admin to preview and publish it."
-        ),
-        "success": True,
-    }
+    return call_tool("generate-article", {
+        "topic": topic,
+        "category": category,
+        "tone": tone,
+        "num_search_results": num_search_results,
+    })
 
 
 _auto_register()

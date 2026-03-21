@@ -3,7 +3,7 @@ notes skill — tools.py
 
 agentskills.io-compatible tool module.
 Full CRUD note management with group organisation and keyword search.
-Backend service calls are lazy imports — resolved at call time within the backend.
+Calls personal-assistant API instead of kk-utils services directly.
 """
 from typing import Optional
 import logging
@@ -39,9 +39,9 @@ def create_note(
         user_id: User ID (auto-injected by Governor)
         metadata: Optional metadata (tags, classification, etc.)
     """
-    from kk_utils.notes.service import create_note
+    from kk_agent_skills._http_client import call_tool
     logger.info(f"Creating note: {title} (group_id={group_id})")
-    return create_note(title=title, content=content, group_id=group_id, user_id=user_id, metadata=metadata)
+    return call_tool("create-note", {"title": title, "content": content, "group_id": group_id})
 
 
 @agent_tool(
@@ -62,9 +62,9 @@ def get_note(
         note_id: Note ID to retrieve
         user_id: User ID for access control (auto-injected)
     """
-    from kk_utils.notes.service import get_note
+    from kk_agent_skills._http_client import call_tool
     logger.info(f"Retrieving note {note_id}")
-    return get_note(note_id=note_id, user_id=user_id)
+    return call_tool("get-note", {"note_id": note_id})
 
 
 @agent_tool(
@@ -93,9 +93,14 @@ def update_note(
         metadata: New metadata (optional)
         user_id: User ID for access control (auto-injected)
     """
-    from kk_utils.notes.service import update_note
+    from kk_agent_skills._http_client import call_tool
     logger.info(f"Updating note {note_id}")
-    return update_note(note_id=note_id, title=title, content=content, metadata=metadata, user_id=user_id)
+    payload = {"note_id": note_id}
+    if title is not None:
+        payload["title"] = title
+    if content is not None:
+        payload["content"] = content
+    return call_tool("update-note", payload)
 
 
 @agent_tool(
@@ -120,9 +125,9 @@ def delete_note(
         user_id: User ID for access control (auto-injected)
         confirmed: Confirmation flag (required for destructive actions)
     """
-    from kk_utils.notes.service import delete_note
+    from kk_agent_skills._http_client import call_tool
     logger.info(f"Deleting note {note_id}")
-    return delete_note(note_id=note_id, user_id=user_id)
+    return call_tool("delete-note", {"note_id": note_id})
 
 
 @agent_tool(
@@ -147,9 +152,9 @@ def search_notes(
         limit: Maximum results to return
         user_id: User ID for filtering results (auto-injected)
     """
-    from kk_utils.notes.service import search_notes
+    from kk_agent_skills._http_client import call_tool
     logger.info(f"Searching notes: {query}")
-    return search_notes(query=query, group_id=group_id, limit=limit, user_id=user_id)
+    return call_tool("search-notes", {"query": query, "group_id": group_id, "limit": limit})
 
 
 @agent_tool(
@@ -172,9 +177,9 @@ def list_notes(
         limit: Maximum results to return
         user_id: User ID for filtering (auto-injected)
     """
-    from kk_utils.notes.service import list_notes
+    from kk_agent_skills._http_client import call_tool
     logger.info(f"Listing notes (group_id={group_id}, limit={limit})")
-    return list_notes(group_id=group_id, limit=limit, user_id=user_id)
+    return call_tool("list-notes", {"group_id": group_id, "limit": limit})
 
 
 _auto_register()
