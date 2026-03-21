@@ -1,0 +1,6 @@
+{
+  "available_prompts": ["master_prompt_qwen", "master_prompt_hidream"],
+  "default_prompt": "master_prompt_qwen",
+  "execution_mode": "batch",
+  "execution_type": "vision_pipeline"
+}

@@ -1,4 +1,6 @@
 {
+  "disabled": true,
+  "disabled_reason": "Rate limit review pending",
   "default_max_results": 5,
   "default_search_depth": "basic"
 }
