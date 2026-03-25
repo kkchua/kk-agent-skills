@@ -1,0 +1,130 @@
+{
+  "description": "Vertical ultra-high-resolution prompt generator — 5 compositionally distinct portrait prompts, single-sentence positive prompts only",
+  "_display_field": "positive_prompt",
+  "_comfyui": {
+    "workflows": [
+      {
+        "name": "QWEN/IMAGE 540x960",
+        "workflow_key": "QWEN/Image_QWEN_PA_Studio-540x960-01-dev",
+        "field_mappings": {
+          "t2i_prompt1": "t2i_prompt1"
+        }
+      },
+      {
+        "name": "QWEN/IMAGE 768x13344",
+        "workflow_key": "QWEN/Image_QWEN_PA_Studio-768x1344-01-dev",
+        "field_mappings": {
+          "t2i_prompt1": "t2i_prompt1"
+        }
+      }
+    ]
+  },
+  "_input_schema": {
+    "fields": [
+      {
+        "name": "images",
+        "type": "file",
+        "accept": "image/*",
+        "multiple": true,
+        "required": true,
+        "label": "Upload Images"
+      }
+    ],
+    "hide_text_input": true,
+    "submit_label": "Generate JSON"
+  },
+  "_filename_field": "subject",
+  "_array_field": "variations",
+  "_csv_columns": [
+    {
+      "header": "image_filename",
+      "field": "image_filename"
+    },
+    {
+      "header": "composition_style",
+      "field": "composition_style"
+    },
+    {
+      "header": "t2i_prompt1",
+      "field": "t2i_prompt1"
+    }
+  ],
+  "type": "object",
+  "required": [
+    "mode",
+    "subject",
+    "variations"
+  ],
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": [
+        "VARIATION"
+      ]
+    },
+    "subject": {
+      "type": "string",
+      "description": "lowercase, underscore separated, max 3 words"
+    },
+    "variations": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "image_filename",
+          "composition_style",
+          "t2i_prompt1"
+        ],
+        "properties": {
+          "image_filename": {
+            "type": "string"
+          },
+          "composition_style": {
+            "type": "string",
+            "enum": [
+              "centered_negative_space",
+              "dynamic_full_height",
+              "cinematic_vertical_depth",
+              "foreground_background_layering",
+              "framed_subject",
+              "low_angle_emphasis",
+              "top_weighted_editorial",
+              "bottom_weighted_editorial",
+              "off_center_editorial",
+              "close_foreground_depth"
+            ]
+          },
+          "t2i_prompt1": {
+            "type": "string",
+            "minLength": 120,
+            "maxLength": 500,
+            "description": "Single fluent sentence only, natural-language positive prompt, no parameters, no brackets, no negative prompt."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "_validation_rules": {
+    "mode_field": "mode",
+    "VARIATION_mode_count": 5,
+    "unique_field_in_VARIATION": "composition_style",
+    "single_sentence_field": "t2i_prompt1",
+    "forbidden_in_positive_prompt": [
+      "--ar",
+      "[",
+      "]",
+      "negative prompt"
+    ],
+    "required_concepts_per_positive_prompt": [
+      "subject clarity",
+      "vertical composition",
+      "lighting",
+      "texture or render detail",
+      "atmosphere or mood"
+    ]
+  }
+}
