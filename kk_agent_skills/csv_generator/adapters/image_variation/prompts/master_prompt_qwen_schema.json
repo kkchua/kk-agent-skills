@@ -2,6 +2,20 @@
   "description": "Qwen VL — VARIATION/STORYLINE mode, 6 camera directions, CJK prompts",
   "_display_field": "t2i_prompt1",
 
+  "_comfyui": {
+    "workflows": [
+      {
+        "name": "Image Variation",
+        "workflow_key": "QWEN/Image_QWEN_PA_Studio-540x960-01-dev",
+        "field_mappings": {
+          "t2i_prompt1":  "t2i_prompt1"
+        }
+      }
+    ]
+  },
+
+
+
   "_input_schema": {
     "fields": [
       {

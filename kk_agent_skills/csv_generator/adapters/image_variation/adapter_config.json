@@ -1,5 +1,10 @@
 {
-  "available_prompts": ["master_prompt_qwen", "master_prompt_hidream"],
+  "available_prompts": [
+			"master_prompt_qwen", 
+			"master_prompt_hidream", 
+			"vertical_master_prompt_v1", 
+			"vertical_master_prompt_v2"
+	],
   "default_prompt": "master_prompt_qwen",
   "execution_mode": "batch",
   "execution_type": "vision_pipeline"
