@@ -8,6 +8,7 @@ setup(
         "kk_agent_skills": [
             "*/config.json",
             "*/adapters/**/*.json",
+            "*/adapters/**/*.txt",
             "*/adapters/**/*.yaml",
         ],
     },
