@@ -1,6 +1,6 @@
 {
   "description": "Vertical ultra-high-resolution prompt generator — 5 compositionally distinct portrait prompts, single-sentence positive prompts only",
-  "_display_field": "positive_prompt",
+  "_display_field": "t2i_prompt1",
   "_comfyui": {
     "workflows": [
       {
