@@ -7,8 +7,10 @@ setup(
     package_data={
         "kk_agent_skills": [
             "*/config.json",
-            "*/adapters/**/*.json",
-            "*/adapters/**/*.yaml",
+            "*/adapters/*/adapter_config.json",
+            "*/adapters/*/prompts/*.json",
+            "*/adapters/*/prompts/*.txt",
+            "*/adapters/*/prompts/*.yaml",
         ],
     },
     include_package_data=True,
