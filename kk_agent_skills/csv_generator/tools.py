@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
         "prompts for ComfyUI T2I batch workflows. Returns download links for JSON and CSV files. "
         "Set auto_submit=True to automatically submit all generated prompts as UGC image jobs."
     ),
-    tags=["csv", "studio", "image", "generation"],
+    tags=["csv_generator", "csv", "studio", "image", "generation"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,
@@ -98,7 +98,7 @@ def _submit_prompts(prompts: List[str], user_id: Optional[str]) -> dict:
         "Submit one or more text-to-image prompts as UGC image generation jobs. "
         "Each prompt is sent to the Wan image workflow — results appear in the Media Gallery."
     ),
-    tags=["csv", "studio", "image", "generation"],
+    tags=["csv_generator", "csv", "studio", "image", "generation"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,
@@ -129,7 +129,7 @@ def submit_ugc_image_jobs(
         "(.raw.json file in uploads/csv_output/_debug/). Useful for fixing validation bugs without "
         "re-calling the LLM. Provide the raw_response_path from the debug logs."
     ),
-    tags=["csv", "studio", "debug", "dry-run"],
+    tags=["csv_generator", "csv", "studio", "debug", "dry-run"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,
