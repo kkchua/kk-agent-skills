@@ -1,0 +1,84 @@
+{
+  "description": "Vertical 9:16 4K UHD — VARIATION mode, 5 unique compositions, English prompts",
+  "_display_field": "t2i_prompt1",
+
+  "_comfyui": {
+    "workflows": [
+      {
+        "name": "Image Variation Vertical EN",
+        "workflow_key": "VERTICAL/Image_Vertical_9x16_4K_EN-01-dev",
+        "field_mappings": {
+          "t2i_prompt1": "t2i_prompt1"
+        }
+      }
+    ]
+  },
+
+  "_input_schema": {
+    "fields": [
+      {
+        "name": "images",
+        "type": "file",
+        "accept": "image/*",
+        "multiple": true,
+        "required": true,
+        "label": "Upload Images"
+      },
+      {
+        "name": "num_rows",
+        "type": "number",
+        "default": 5,
+        "min": 3,
+        "max": 5,
+        "required": false,
+        "label": "Variations per Image"
+      }
+    ],
+    "hide_text_input": true,
+    "submit_label": "Generate CSV"
+  },
+
+  "_filename_field": "subject",
+  "_array_field":    "variations",
+
+  "_csv_columns": [
+    { "header": "image_filename",    "field": "image_filename" },
+    { "header": "composition_style", "field": "composition_style" },
+    { "header": "t2i_prompt1",       "field": "t2i_prompt1" }
+  ],
+
+  "type": "object",
+  "required": ["mode", "subject", "variations"],
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": ["VARIATION"]
+    },
+    "subject": {
+      "type": "string",
+      "description": "lowercase, underscore separated, max 3 words"
+    },
+    "variations": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["image_filename", "composition_style", "t2i_prompt1"],
+        "properties": {
+          "image_filename":    { "type": "string" },
+          "composition_style": { "type": "string" },
+          "t2i_prompt1":       { "type": "string", "minLength": 60, "maxLength": 200 }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+
+  "_validation_rules": {
+    "mode_field":                "mode",
+    "VARIATION_mode_count":      5,
+    "unique_field_in_VARIATION": "composition_style"
+  }
+}
