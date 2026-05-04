@@ -35,7 +35,7 @@ def _base_url() -> str:
         "Defaults to 'draft' status — use publish_portfolio_article to make it live. "
         "Returns the slug and article ID for follow-up operations."
     ),
-    tags=["portfolio", "article", "blog", "create"],
+    tags=["portfolio_publisher", "portfolio", "article", "blog", "create"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,
@@ -102,7 +102,7 @@ def create_portfolio_article(
         "Change a portfolio article's status to 'published', making it visible on the site. "
         "Pass the article slug (returned when the article was created)."
     ),
-    tags=["portfolio", "article", "publish"],
+    tags=["portfolio_publisher", "portfolio", "article", "publish"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,
@@ -143,7 +143,7 @@ def publish_portfolio_article(
         "Archive a portfolio article, removing it from public view without deleting it. "
         "Pass the article slug."
     ),
-    tags=["portfolio", "article", "archive"],
+    tags=["portfolio_publisher", "portfolio", "article", "archive"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,
@@ -182,7 +182,7 @@ def archive_portfolio_article(
         "List portfolio blog articles. Optionally filter by status: "
         "'draft', 'published', or 'archived'. Returns id, slug, title, status, and dates."
     ),
-    tags=["portfolio", "article", "list"],
+    tags=["portfolio_publisher", "portfolio", "article", "list"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,
@@ -230,7 +230,7 @@ def list_portfolio_articles(
         "Update the content or metadata of an existing portfolio article. "
         "Pass the slug and only the fields you want to change."
     ),
-    tags=["portfolio", "article", "update"],
+    tags=["portfolio_publisher", "portfolio", "article", "update"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,

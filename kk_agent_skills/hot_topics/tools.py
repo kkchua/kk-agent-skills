@@ -166,7 +166,7 @@ async def _analyze_trends(subject: str, search_results: list, max_topics: int = 
         "and suggested angles for deeper exploration. "
         "Perfect for content planning, research prioritization, or staying current."
     ),
-    tags=["topics", "trending", "research", "analysis", "web", "discovery"],
+    tags=["hot_topics", "topics", "trending", "research", "analysis", "web", "discovery"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,

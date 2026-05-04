@@ -75,7 +75,7 @@ async def _collect_research(
         "'market' (competitive landscape), or 'article' (blog-ready output). "
         "Returns a detailed markdown report with summary and follow-up questions."
     ),
-    tags=["research", "web", "analysis", "report", "multi-agent"],
+    tags=["deep_research", "research", "web", "analysis", "report", "multi-agent"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,
@@ -128,7 +128,7 @@ def deep_research(
         "to the Portfolio site as a draft. Optionally auto-publishes. "
         "Returns the article slug, title, and draft URL."
     ),
-    tags=["research", "article", "portfolio", "blog", "multi-agent"],
+    tags=["deep_research", "research", "article", "portfolio", "blog", "multi-agent"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,

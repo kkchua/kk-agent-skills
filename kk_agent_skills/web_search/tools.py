@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
         "Use this to research facts, find documentation, get references, "
         "or look up anything that requires up-to-date information."
     ),
-    tags=["search", "research", "web"],
+    tags=["web_search", "search", "research", "web"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,

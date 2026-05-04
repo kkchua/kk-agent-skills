@@ -1,8 +1,0 @@
-{
-  "available_prompts": ["vertical_master_prompt_v2"],
-  "default_prompt": "vertical_master_prompt_v2",
-  "execution_mode": "batch",
-  "execution_type": "vision_pipeline_v2",
-  "accepts_input_type": "image_desc",
-  "display_label": "CSV Generator V2"
-}
