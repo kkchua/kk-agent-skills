@@ -58,7 +58,7 @@ def _submit_prompts(prompts: List[str], user_id: Optional[str]) -> dict:
         "Returns download links for JSON and CSV files. "
         "Set auto_submit=True to automatically submit all generated prompts as UGC image jobs."
     ),
-    tags=["csv_generator", "csv", "studio", "image", "generation"],
+    tags=["csv_generator_v2", "csv_generator", "csv", "studio", "image", "generation"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,

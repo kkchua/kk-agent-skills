@@ -1,7 +1,14 @@
-# csv_generator_v2
-
-Two-phase image-to-CSV pipeline for ComfyUI T2I batch workflows.
-
+---
+name: csv_generator_v2
+description: Two-phase image-to-CSV pipeline for ComfyUI T2I batch workflows.
+version: 1.0.0
+dependencies: openai-agents
+capabilities: tool_provider
+tags: csv, image, generation
+metadata:
+  author: personal-assistant
+  access_levels: user
+---
 ## Overview
 
 Improves on `csv_generator` by running a dedicated description extraction pass first, then feeding those structured descriptions as context into the prompt generation phase. This gives the generation LLM a richer, pre-analyzed view of each image rather than relying solely on raw vision.

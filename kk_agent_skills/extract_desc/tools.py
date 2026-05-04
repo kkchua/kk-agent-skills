@@ -30,7 +30,7 @@ def _load_config() -> dict:
         "The vision model is fixed by skill configuration and cannot be overridden by the caller. "
         "Returns one description object per image."
     ),
-    tags=["vision", "image", "description", "csv"],
+    tags=["extract_desc", "vision", "image", "description", "csv"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python *)",
+      "Read(//home/kengkoon/projects/personal-assistant/backend/app/services/**)",
+      "Read(//home/kengkoon/projects/pa-admin/src/pages/**)",
+      "Read(//home/kengkoon/projects/pa-admin/src/api/**)"
+    ]
+  },
+  "$version": 3
+}

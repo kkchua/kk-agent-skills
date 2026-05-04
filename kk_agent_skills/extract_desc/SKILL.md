@@ -1,3 +1,15 @@
+---
+name: extract_desc
+description: Structured visual description extraction from uploaded images using a fixed vision model.
+version: 1.0.0
+dependencies: openai-agents
+capabilities: tool_provider
+metadata:
+  author: personal-assistant
+  version: "1.0.0"
+  tags: extract_desc, vision, image, description, csv
+  access_levels: user
+---
 # extract_desc
 
 Structured visual description extraction from uploaded images using a fixed vision model.
