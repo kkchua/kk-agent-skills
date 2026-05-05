@@ -64,5 +64,5 @@ Extraction model is configured separately in `extract_desc/config.json`.
 ## PA Backend dependency
 
 - `generate-csv` endpoint must accept optional `descriptions: str` field
-- DB prompt entry `vertical_master_prompt_v2` must include `{descriptions}` placeholder
+- DB prompt entry `vertical_master_prompt_v2` must include the `{descriptions}` placeholder
 - DB prompt entry `extract_desc` must exist (see `extract_desc` skill)

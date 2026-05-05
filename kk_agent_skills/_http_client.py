@@ -15,18 +15,30 @@ import os
 import logging
 from typing import Any, Dict, Optional
 
-import requests
+import json
+from urllib import error as urllib_error
+from urllib import request as urllib_request
+
+try:
+    import requests
+    _HAS_REQUESTS = True
+except ModuleNotFoundError:
+    requests = None
+    _HAS_REQUESTS = False
 
 logger = logging.getLogger(__name__)
 
 _PA_BASE_URL: str = os.environ.get("PERSONAL_ASSISTANT_API_URL", "http://localhost:8000").rstrip("/")
 _INTERNAL_KEY: str = os.environ.get("SKILL_INTERNAL_KEY", "")
 
-# Reuse a single session for connection pooling
-_session = requests.Session()
-_session.headers.update({"Content-Type": "application/json"})
-if _INTERNAL_KEY:
-    _session.headers.update({"X-Internal-Key": _INTERNAL_KEY})
+if _HAS_REQUESTS:
+    # Reuse a single session for connection pooling
+    _session = requests.Session()
+    _session.headers.update({"Content-Type": "application/json"})
+    if _INTERNAL_KEY:
+        _session.headers.update({"X-Internal-Key": _INTERNAL_KEY})
+else:
+    _session = None
 
 
 def call_tool(
@@ -54,23 +66,57 @@ def call_tool(
     if user_token:
         headers["Authorization"] = f"Bearer {user_token}"
 
-    try:
-        resp = _session.post(url, json=payload, headers=headers, timeout=timeout)
-        resp.raise_for_status()
-        return resp.json()
-    except requests.exceptions.HTTPError as exc:
-        body = {}
+    if _HAS_REQUESTS:
         try:
-            body = exc.response.json()
+            resp = _session.post(url, json=payload, headers=headers, timeout=timeout)
+            resp.raise_for_status()
+            return resp.json()
+        except requests.exceptions.HTTPError as exc:
+            body = {}
+            try:
+                body = exc.response.json()
+            except Exception:
+                pass
+            error_detail = body.get("detail", str(exc))
+            logger.error("Tool call %s HTTP error %s: %s", tool_name, exc.response.status_code, error_detail)
+            return {"success": False, "error": error_detail, "status_code": exc.response.status_code}
+        except requests.exceptions.ConnectionError as exc:
+            logger.error("Tool call %s connection error: %s", tool_name, exc)
+            return {"success": False, "error": f"Cannot connect to personal-assistant API at {_PA_BASE_URL}"}
+        except requests.exceptions.Timeout:
+            logger.error("Tool call %s timed out after %ss", tool_name, timeout)
+            return {"success": False, "error": f"Tool call {tool_name} timed out"}
+        except Exception as exc:
+            logger.error("Tool call %s unexpected error: %s", tool_name, exc, exc_info=True)
+            return {"success": False, "error": str(exc)}
+
+    try:
+        req_headers = {"Content-Type": "application/json"}
+        if _INTERNAL_KEY:
+            req_headers["X-Internal-Key"] = _INTERNAL_KEY
+        if user_token:
+            req_headers["Authorization"] = f"Bearer {user_token}"
+        request = urllib_request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers=req_headers,
+            method="POST",
+        )
+        with urllib_request.urlopen(request, timeout=timeout) as resp:
+            body = resp.read().decode("utf-8")
+            return json.loads(body)
+    except urllib_error.HTTPError as exc:
+        try:
+            body = json.loads(exc.read().decode("utf-8"))
         except Exception:
-            pass
+            body = {}
         error_detail = body.get("detail", str(exc))
-        logger.error("Tool call %s HTTP error %s: %s", tool_name, exc.response.status_code, error_detail)
-        return {"success": False, "error": error_detail, "status_code": exc.response.status_code}
-    except requests.exceptions.ConnectionError as exc:
+        logger.error("Tool call %s HTTP error %s: %s", tool_name, exc.code, error_detail)
+        return {"success": False, "error": error_detail, "status_code": exc.code}
+    except urllib_error.URLError as exc:
         logger.error("Tool call %s connection error: %s", tool_name, exc)
         return {"success": False, "error": f"Cannot connect to personal-assistant API at {_PA_BASE_URL}"}
-    except requests.exceptions.Timeout:
+    except TimeoutError:
         logger.error("Tool call %s timed out after %ss", tool_name, timeout)
         return {"success": False, "error": f"Tool call {tool_name} timed out"}
     except Exception as exc:
