@@ -7,9 +7,11 @@ Exposes one public tool:
 """
 import asyncio
 import logging
+from pathlib import Path
 from typing import Optional
 
 from kk_utils.agent_tools import _auto_register, agent_tool
+from kk_utils.llm_prompt_loader import load_llm_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -25,26 +27,16 @@ _TRENDING_SEARCH_TEMPLATES = [
     "{subject} latest breakthrough developments",
 ]
 
-# AI prompt for analyzing and ranking topics
-_TOPIC_ANALYSIS_PROMPT = """
-Analyze the following search results about trending topics in "{subject}".
-Identify the top {max_topics} hottest/most trending topics.
-
-For each topic, provide:
-1. **Topic Name** - Clear, concise title
-2. **Why It's Hot** - Explanation of why it's trending now (recent events, controversies, breakthroughs)
-3. **Discussion Level** - High/Medium/Low based on how much people are talking about it
-4. **Controversy Level** - High/Medium/Low based on debate level
-5. **Suggested Angles** - 2-3 specific angles or questions worth exploring
-
-Search Results:
-{search_results}
-
-Format your response as a markdown table with columns:
-| Rank | Topic | Why It's Hot | Discussion | Controversy | Suggested Angles |
-
-Then provide a brief summary of overall trends in the field.
-"""
+_PROMPT_NAMESPACE = "hot_topics"
+_PROMPT_ADAPTER = "analysis"
+_PROMPT_NAME = "master"
+_PROMPT_FALLBACK_PATH = Path(__file__).parent / "prompts" / _PROMPT_ADAPTER / f"{_PROMPT_NAME}.txt"
+_PROMPT_FALLBACK_TEXT = (
+    'Analyze the following search results about trending topics in "{subject}". '
+    "Identify the top {max_topics} hottest/most trending topics.\n\n"
+    "Search Results:\n{search_results}\n\n"
+    "Return a markdown table with columns: Rank, Topic, Why It's Hot, Discussion, Controversy, Suggested Angles."
+)
 
 
 def _asyncio_run(coroutine):
@@ -117,8 +109,17 @@ async def _analyze_trends(subject: str, search_results: list, max_topics: int = 
     # Prepare search results text
     results_text = "\n\n---\n\n".join(search_results) if search_results else "No search results found."
     
-    # Create prompt
-    prompt = _TOPIC_ANALYSIS_PROMPT.format(
+    # Load the prompt text from DB first, then file fallback, then hardcoded fallback.
+    prompt_template = load_llm_prompt(
+        _PROMPT_NAMESPACE,
+        _PROMPT_ADAPTER,
+        _PROMPT_NAME,
+        fallback_path=_PROMPT_FALLBACK_PATH,
+        fallback_text=_PROMPT_FALLBACK_TEXT,
+    )
+
+    # Render prompt with runtime values
+    prompt = prompt_template.format(
         subject=subject,
         max_topics=max_topics,
         search_results=results_text,
@@ -166,7 +167,7 @@ async def _analyze_trends(subject: str, search_results: list, max_topics: int = 
         "and suggested angles for deeper exploration. "
         "Perfect for content planning, research prioritization, or staying current."
     ),
-    tags=["hot_topics", "topics", "trending", "research", "analysis", "web", "discovery"],
+    tags=["hot_topics", "topics", "trending", "discovery"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,

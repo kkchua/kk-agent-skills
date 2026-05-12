@@ -17,7 +17,7 @@ SKILL = SkillManifest(
         "of why they're trending and suggested angles for exploration."
     ),
     version="1.0.0",
-    tags=["topics", "trending", "research", "analysis", "web"],
+    tags=["hot_topics", "topics", "trending", "discovery"],
     capabilities=["tool_provider"],
     min_access_level="user",
 )

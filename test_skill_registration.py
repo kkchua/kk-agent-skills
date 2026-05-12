@@ -6,6 +6,7 @@ What this checks per skill:
   - tools.py can be imported without errors
   - _auto_register() was called (tools appear in AgentRegistry)
   - @agent_tool carries the skill name as a tag (required for master_agent routing)
+  - skill.py exists and exports a valid SkillManifest
   - SKILL.md exists with YAML frontmatter (required for admin panel metadata)
   - config.json exists and is valid JSON
 
@@ -96,14 +97,32 @@ def _check_config_json(skill_dir: Path) -> list[str]:
 
 
 def _check_skill_py(skill_dir: Path) -> list[str]:
-    """Warn if skill.py (SkillManifest) is missing."""
-    warnings = []
-    if not (skill_dir / "skill.py").exists():
-        warnings.append(
-            "skill.py not found — SkillManifest missing. "
-            "Legacy skill; consider adding skill.py for richer metadata."
+    """Error if skill.py (SkillManifest) is missing or invalid."""
+    errors = []
+    skill_py = skill_dir / "skill.py"
+    if not skill_py.exists():
+        errors.append(
+            "skill.py not found — SkillManifest is required. "
+            "Add a manifest with SKILL = SkillManifest(...)."
         )
-    return warnings
+        return errors
+
+    module_path = f"kk_agent_skills.{skill_dir.name}.skill"
+    sys.modules.pop(module_path, None)
+    try:
+        mod = importlib.import_module(module_path)
+        manifest = getattr(mod, "SKILL", None)
+        from kk_utils.skill_manifest import SkillManifest
+        if not isinstance(manifest, SkillManifest):
+            errors.append("skill.py must export SKILL = SkillManifest(...).")
+        elif manifest.name != skill_dir.name:
+            errors.append(
+                f"SkillManifest name '{manifest.name}' does not match folder name '{skill_dir.name}'."
+            )
+    except Exception as exc:
+        errors.append(f"skill.py failed to import: {type(exc).__name__}: {exc}")
+
+    return errors
 
 
 # ---------------------------------------------------------------------------
@@ -197,7 +216,7 @@ def check_skill(skill_name: str) -> bool:
     # --- Structural checks (no import) ---
     warnings += _check_skill_md(skill_dir)
     errors   += _check_config_json(skill_dir)
-    warnings += _check_skill_py(skill_dir)
+    errors   += _check_skill_py(skill_dir)
 
     # --- Import check ---
     import_error = _import_skill(skill_name)

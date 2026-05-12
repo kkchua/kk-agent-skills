@@ -1,0 +1,17 @@
+Analyze the following search results about trending topics in "{subject}".
+Identify the top {max_topics} hottest/most trending topics.
+
+For each topic, provide:
+1. **Topic Name** - Clear, concise title
+2. **Why It's Hot** - Explanation of why it's trending now (recent events, controversies, breakthroughs)
+3. **Discussion Level** - High/Medium/Low based on how much people are talking about it
+4. **Controversy Level** - High/Medium/Low based on debate level
+5. **Suggested Angles** - 2-3 specific angles or questions worth exploring
+
+Search Results:
+{search_results}
+
+Format your response as a markdown table with columns:
+| Rank | Topic | Why It's Hot | Discussion | Controversy | Suggested Angles |
+
+Then provide a brief summary of overall trends in the field.
