@@ -8,6 +8,7 @@ Calls personal-assistant API instead of kk-utils services directly.
 from typing import Optional
 import logging
 
+from kk_utils.execution_trace import emit_trace
 from kk_utils.agent_tools import agent_tool, _auto_register
 
 logger = logging.getLogger(__name__)
@@ -41,6 +42,7 @@ def create_note(
     """
     from kk_agent_skills._http_client import call_tool
     logger.info(f"Creating note: {title} (group_id={group_id})")
+    emit_trace(f"notes.create_note start title={title!r} group_id={group_id}")
     return call_tool("create-note", {"title": title, "content": content, "group_id": group_id})
 
 
@@ -64,6 +66,7 @@ def get_note(
     """
     from kk_agent_skills._http_client import call_tool
     logger.info(f"Retrieving note {note_id}")
+    emit_trace(f"notes.get_note start note_id={note_id}")
     return call_tool("get-note", {"note_id": note_id})
 
 
@@ -95,6 +98,7 @@ def update_note(
     """
     from kk_agent_skills._http_client import call_tool
     logger.info(f"Updating note {note_id}")
+    emit_trace(f"notes.update_note start note_id={note_id}")
     payload = {"note_id": note_id}
     if title is not None:
         payload["title"] = title
@@ -127,6 +131,7 @@ def delete_note(
     """
     from kk_agent_skills._http_client import call_tool
     logger.info(f"Deleting note {note_id}")
+    emit_trace(f"notes.delete_note start note_id={note_id}")
     return call_tool("delete-note", {"note_id": note_id})
 
 
@@ -154,6 +159,7 @@ def search_notes(
     """
     from kk_agent_skills._http_client import call_tool
     logger.info(f"Searching notes: {query}")
+    emit_trace(f"notes.search_notes start query={query!r} group_id={group_id} limit={limit}")
     return call_tool("search-notes", {"query": query, "group_id": group_id, "limit": limit})
 
 
@@ -179,6 +185,7 @@ def list_notes(
     """
     from kk_agent_skills._http_client import call_tool
     logger.info(f"Listing notes (group_id={group_id}, limit={limit})")
+    emit_trace(f"notes.list_notes start group_id={group_id} limit={limit}")
     return call_tool("list-notes", {"group_id": group_id, "limit": limit})
 
 

@@ -7,6 +7,7 @@ Calls personal-assistant API instead of kk-utils services directly.
 """
 import logging
 from typing import Optional
+from kk_utils.execution_trace import emit_trace
 
 from kk_utils.agent_tools import agent_tool, _auto_register
 
@@ -45,7 +46,13 @@ def web_search(
     from kk_agent_skills._http_client import call_tool
 
     logger.info(f"Web search: '{query}' (max_results={max_results}) for user {user_id}")
-    return call_tool("web-search", {"query": query, "max_results": max_results, "search_depth": search_depth})
+    emit_trace(f"web_search start query={query!r} max_results={max_results} search_depth={search_depth!r}")
+    result = call_tool("web-search", {"query": query, "max_results": max_results, "search_depth": search_depth})
+    if result.get("success"):
+        emit_trace(f"web_search done query={query!r} results={len(result.get('results', []))}")
+    else:
+        emit_trace(f"web_search error query={query!r}: {result.get('error')}")
+    return result
 
 
 _auto_register()

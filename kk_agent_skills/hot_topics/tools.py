@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Optional
 
 from kk_utils.agent_tools import _auto_register, agent_tool
+from kk_utils.execution_trace import emit_trace
 from kk_utils.llm_prompt_loader import load_llm_prompt
 
 logger = logging.getLogger(__name__)
@@ -66,12 +67,14 @@ async def _search_for_trends(subject: str, max_searches: int = 5) -> list:
     
     all_results = []
     queries_used = []
+    emit_trace(f"hot_topics.search start subject={subject!r} max_searches={max_searches}")
     
     # Run multiple searches with different templates
     for i, template in enumerate(_TRENDING_SEARCH_TEMPLATES[:max_searches]):
         query = template.format(subject=subject)
         queries_used.append(query)
         logger.info(f"Searching for trends: {query}")
+        emit_trace(f"hot_topics.search query={query!r}")
         
         try:
             result = web_search(
@@ -85,10 +88,15 @@ async def _search_for_trends(subject: str, max_searches: int = 5) -> list:
                 for r in result.get("results", []):
                     formatted = f"Title: {r.get('title', 'N/A')}\nURL: {r.get('url', 'N/A')}\nSnippet: {r.get('content', 'N/A')[:300]}"
                     all_results.append(formatted)
+                emit_trace(
+                    f"hot_topics.search done query={query!r} results={len(result.get('results', []))}"
+                )
         except Exception as e:
             logger.warning(f"Search failed for query '{query}': {e}")
-    
+            emit_trace(f"hot_topics.search error query={query!r}: {e}")
+
     logger.info(f"Trend search complete: {len(all_results)} results from {len(queries_used)} queries")
+    emit_trace(f"hot_topics.search complete results={len(all_results)} queries={len(queries_used)}")
     return all_results
 
 
@@ -129,6 +137,7 @@ async def _analyze_trends(subject: str, search_results: list, max_topics: int = 
     
     with trace("hot_topics_analysis", trace_id=trace_id):
         logger.info(f"Analyzing trends for '{subject}' (trace: {trace_id})")
+        emit_trace(f"hot_topics.analysis start subject={subject!r} max_topics={max_topics} trace_id={trace_id}")
         
         try:
             # Use OpenAI Agents SDK to analyze
@@ -150,6 +159,7 @@ async def _analyze_trends(subject: str, search_results: list, max_topics: int = 
             
         except Exception as e:
             logger.exception(f"Trend analysis failed: {e}")
+            emit_trace(f"hot_topics.analysis error trace_id={trace_id}: {e}")
             return {
                 "success": False,
                 "error": str(e),
@@ -203,12 +213,14 @@ def hot_topics_discovery(
     max_searches = max(1, min(8, max_searches))
     
     logger.info(f"Hot topics discovery: subject='{subject}' max_topics={max_topics} max_searches={max_searches} user={user_id}")
+    emit_trace(f"hot_topics.discovery start subject={subject!r} max_topics={max_topics} max_searches={max_searches}")
     
     try:
         # Step 1: Search for trending topics
         search_results = _asyncio_run(_search_for_trends(subject, max_searches))
         
         if not search_results:
+            emit_trace(f"hot_topics.discovery no search results subject={subject!r}")
             return {
                 "success": False,
                 "error": "No search results found. Try a different subject or check web search configuration.",
@@ -217,11 +229,13 @@ def hot_topics_discovery(
         
         # Step 2: Analyze and rank topics
         analysis = _asyncio_run(_analyze_trends(subject, search_results, max_topics))
+        emit_trace(f"hot_topics.discovery done subject={subject!r}")
         
         return analysis
         
     except Exception as exc:
         logger.exception(f"Hot topics discovery failed: {exc}")
+        emit_trace(f"hot_topics.discovery error subject={subject!r}: {exc}")
         return {
             "success": False,
             "error": str(exc),

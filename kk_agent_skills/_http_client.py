@@ -28,6 +28,12 @@ except ModuleNotFoundError:
 
 logger = logging.getLogger(__name__)
 
+try:
+    from kk_utils.execution_trace import emit_trace
+except Exception:  # pragma: no cover - trace bridge is optional
+    def emit_trace(message: str) -> None:
+        return
+
 _PA_BASE_URL: str = os.environ.get("PERSONAL_ASSISTANT_API_URL", "http://localhost:8000").rstrip("/")
 _INTERNAL_KEY: str = os.environ.get("SKILL_INTERNAL_KEY", "")
 
@@ -62,6 +68,7 @@ def call_tool(
         On network/HTTP error returns {"success": False, "error": "<message>"}.
     """
     url = f"{_PA_BASE_URL}/api/v1/tools/{tool_name}"
+    emit_trace(f"tool_call start {tool_name}")
     headers = {}
     if user_token:
         headers["Authorization"] = f"Bearer {user_token}"
@@ -70,7 +77,9 @@ def call_tool(
         try:
             resp = _session.post(url, json=payload, headers=headers, timeout=timeout)
             resp.raise_for_status()
-            return resp.json()
+            result = resp.json()
+            emit_trace(f"tool_call done {tool_name}")
+            return result
         except requests.exceptions.HTTPError as exc:
             body = {}
             try:
@@ -79,15 +88,19 @@ def call_tool(
                 pass
             error_detail = body.get("detail", str(exc))
             logger.error("Tool call %s HTTP error %s: %s", tool_name, exc.response.status_code, error_detail)
+            emit_trace(f"tool_call error {tool_name}: {error_detail}")
             return {"success": False, "error": error_detail, "status_code": exc.response.status_code}
         except requests.exceptions.ConnectionError as exc:
             logger.error("Tool call %s connection error: %s", tool_name, exc)
+            emit_trace(f"tool_call error {tool_name}: connection error")
             return {"success": False, "error": f"Cannot connect to personal-assistant API at {_PA_BASE_URL}"}
         except requests.exceptions.Timeout:
             logger.error("Tool call %s timed out after %ss", tool_name, timeout)
+            emit_trace(f"tool_call error {tool_name}: timeout")
             return {"success": False, "error": f"Tool call {tool_name} timed out"}
         except Exception as exc:
             logger.error("Tool call %s unexpected error: %s", tool_name, exc, exc_info=True)
+            emit_trace(f"tool_call error {tool_name}: {exc}")
             return {"success": False, "error": str(exc)}
 
     try:
@@ -104,7 +117,9 @@ def call_tool(
         )
         with urllib_request.urlopen(request, timeout=timeout) as resp:
             body = resp.read().decode("utf-8")
-            return json.loads(body)
+            result = json.loads(body)
+            emit_trace(f"tool_call done {tool_name}")
+            return result
     except urllib_error.HTTPError as exc:
         try:
             body = json.loads(exc.read().decode("utf-8"))
@@ -112,13 +127,17 @@ def call_tool(
             body = {}
         error_detail = body.get("detail", str(exc))
         logger.error("Tool call %s HTTP error %s: %s", tool_name, exc.code, error_detail)
+        emit_trace(f"tool_call error {tool_name}: {error_detail}")
         return {"success": False, "error": error_detail, "status_code": exc.code}
     except urllib_error.URLError as exc:
         logger.error("Tool call %s connection error: %s", tool_name, exc)
+        emit_trace(f"tool_call error {tool_name}: connection error")
         return {"success": False, "error": f"Cannot connect to personal-assistant API at {_PA_BASE_URL}"}
     except TimeoutError:
         logger.error("Tool call %s timed out after %ss", tool_name, timeout)
+        emit_trace(f"tool_call error {tool_name}: timeout")
         return {"success": False, "error": f"Tool call {tool_name} timed out"}
     except Exception as exc:
         logger.error("Tool call %s unexpected error: %s", tool_name, exc, exc_info=True)
+        emit_trace(f"tool_call error {tool_name}: {exc}")
         return {"success": False, "error": str(exc)}
