@@ -7,7 +7,9 @@ self-contained skill with SKILL.md, config.json, and tools.py.
 Available skills:
   kk_agent_skills.ai_tools            — Summarize, rewrite, extract tasks, classify intent
   kk_agent_skills.article_generation  — Research + AI article drafting (single-shot)
+  kk_agent_skills.csv_generator_v2    — Two-phase image-to-CSV: extract_desc → enriched prompt generation
   kk_agent_skills.deep_research       — Multi-agent deep research pipeline (YAML prompt variants)
+  kk_agent_skills.extract_desc        — Structured visual description extraction from images (fixed model)
   kk_agent_skills.hot_topics          — Discover trending topics for any subject
   kk_agent_skills.notes               — Full CRUD note management
   kk_agent_skills.portfolio_publisher — Portfolio-01 article CRUD (create/publish/archive)

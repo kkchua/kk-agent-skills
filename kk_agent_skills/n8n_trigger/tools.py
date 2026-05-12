@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
         "is a parameter name with 'type', 'required', and 'description' fields. "
         "Always call this before triggering a workflow to know exactly what data to pass."
     ),
-    tags=["n8n", "automation", "workflow"],
+    tags=["n8n_trigger", "n8n", "automation", "workflow"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,
@@ -58,7 +58,7 @@ def list_n8n_workflows(
         "Required params must be present or the backend will reject the request. "
         "Example: trigger 'send-email' with data={'to': 'x@y.com', 'subject': 'Hi', 'body': '...'}."
     ),
-    tags=["n8n", "automation", "workflow", "trigger"],
+    tags=["n8n_trigger", "n8n", "automation", "workflow", "trigger"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=True,

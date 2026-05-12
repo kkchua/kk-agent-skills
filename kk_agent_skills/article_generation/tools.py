@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
         "Use this when asked to write, research, or create an article, post, or guide about a technical topic. "
         "Example: 'write an article about ChromaDB' or 'research RAG pipeline design and create a blog post'."
     ),
-    tags=["research", "writing", "blog", "article"],
+    tags=["article_generation", "research", "writing", "blog", "article"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,

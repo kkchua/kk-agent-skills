@@ -121,7 +121,6 @@ def submit_ugc_image_jobs(
     result["success"] = result["submitted"] > 0
     return result
 
-
 @agent_tool(
     name="Dry-Run CSV from Saved Response",
     description=(

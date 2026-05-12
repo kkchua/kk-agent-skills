@@ -6,7 +6,7 @@ compatibility: Requires OpenAI API key, Tavily API key for web search, and netwo
 metadata:
   author: kkchua
   version: "1.0.0"
-  tags: topics, trending, research, analysis, web, discovery
+  tags: hot_topics, topics, trending, discovery
 allowed-tools: Bash(curl:*) Read Write
 ---
 
@@ -15,6 +15,9 @@ allowed-tools: Bash(curl:*) Read Write
 ## Overview
 
 Discovers trending and hot topics for any given subject. Uses web search and AI analysis to identify the most discussed, controversial, and emerging topics in a field.
+
+Prompt registry key:
+- `hot_topics / analysis / master`
 
 ## When to Use
 

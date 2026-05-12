@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 @agent_tool(
     name="Summarize Text",
     description="Summarize text content into a concise summary with key bullet points",
-    tags=["ai", "summarize", "text-processing"],
+    tags=["ai_tools", "ai", "summarize", "text-processing"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,
@@ -44,7 +44,7 @@ def summarize_text(
 @agent_tool(
     name="Rewrite Text",
     description="Rewrite text with a different tone or style (professional, casual, friendly, etc.)",
-    tags=["ai", "rewrite", "text-processing"],
+    tags=["ai_tools", "ai", "rewrite", "text-processing"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,
@@ -72,7 +72,7 @@ def rewrite_text(
 @agent_tool(
     name="Extract Tasks",
     description="Extract actionable tasks from text with priority and due dates",
-    tags=["ai", "tasks", "extraction"],
+    tags=["ai_tools", "ai", "tasks", "extraction"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,
@@ -96,7 +96,7 @@ def extract_tasks(
 @agent_tool(
     name="Classify Intent",
     description="Classify user intent and extract entities for routing to appropriate tools",
-    tags=["ai", "intent", "classification"],
+    tags=["ai_tools", "ai", "intent", "classification"],
     access_level="user",
     sensitivity="low",
     requires_confirmation=False,

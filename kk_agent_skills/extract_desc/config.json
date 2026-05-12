@@ -1,0 +1,4 @@
+{
+  "model": "qwen/qwen3.6-plus",
+  "prompt_name": "extract_desc"
+}
